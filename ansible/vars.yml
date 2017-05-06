@@ -1,0 +1,9 @@
+ssh_key: ansible_ec2
+aws_access_key: AKIAJWQK7D7NWNQZ7SLQ
+aws_secret_key: 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
+key_name: ansible_ec2
+aws_region: us-east-1
+vpc_id: vpc-bdd49cd9
+cidr_ip: 172.31.0.0/16
+ami_id: ami-ae7bfdb8
+instance_type: t2.micro
