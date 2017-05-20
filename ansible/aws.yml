@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   vars_files:
-    - vars.yml
+    - vars/main.yml
   connection: local
   gather_facts: false
 
@@ -26,7 +26,7 @@
         rules_egress: []
 
 
-tasks:
+  tasks:
     - name: Configure EC2 Security Groups.
       ec2_group:
         name: "{{ item.name }}"
@@ -41,8 +41,8 @@ tasks:
     - name: Provision EC2 instances.
       ec2:
         key_name: "{{ssh_key}}"
-        aws_access_key: "{{aws_access_key}}"
-        aws_secret_key: "{{aws_secret_key}}"
+        #aws_access_key: "{{aws_access_key}}"
+        #aws_secret_key: "{{aws_secret_key}}"
         instance_tags:
           inventory_group: "{{ item.group | default('') }}"
           inventory_host: "{{ item.name | default('') }}"
@@ -52,7 +52,7 @@ tasks:
         region: "{{ aws_region | default('us-east-1') }}" # Oregon
         wait: yes
         wait_timeout: 500
-        exact_count: 0
+        exact_count: 1
         count_tag:
           inventory_group: "{{ item.group | default('') }}"
           inventory_host: "{{ item.name | default('') }}"
@@ -66,20 +66,22 @@ tasks:
         groups: "aws,{{ item.1.item.group }},{{ item.1.item.name }}"
         # You can dynamically add inventory variables per-host.
         ansible_ssh_user: centos #ec2-user
-        mysql_replication_role: >
-          {{ 'master' if (item.1.item.name == 'a4d.lamp.db.1')
-          else 'slave' }}
-        mysql_server_id: "{{ item.0 }}"
       when: item.1.instances is defined
       with_indexed_items: "{{created_instances.results}}"
 
 # Run some general configuration on all AWS hosts.
--hosts: aws
+- hosts: aws
   gather_facts: false
 
   tasks:
-    - name: Wait for port 22 to become available.
-      local_action: "wait_for port=22 host={{ inventory_hostname }}"
+    - name: Wait for server to restart
+      local_action:
+        module: wait_for
+        host: "{{ inventory_hostname }}"
+        port: 22
+        delay: 45
+        timeout: 300
+      become: no
 
     - name: Set selinux into 'permissive' mode.
       selinux: policy=targeted state=permissive
