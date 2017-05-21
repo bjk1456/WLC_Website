@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   vars_files:
-    - vars/main.yml
+    - ../vars/main.yml
   connection: local
   gather_facts: false
 
@@ -79,7 +79,7 @@
         module: wait_for
         host: "{{ inventory_hostname }}"
         port: 22
-        delay: 45
+        delay: 90
         timeout: 300
       become: no
 
