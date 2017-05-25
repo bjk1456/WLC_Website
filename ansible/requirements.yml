@@ -2,6 +2,7 @@
 - src: geerlingguy.repo-epel
 #- src: geerlingguy.varnish
 - src: geerlingguy.apache
+- src: git+https://git.openstack.org/openstack/openstack-ansible-security
 #- src: geerlingguy.php
 #- src: geerlingguy.php-mysql
 #- src: geerlingguy.php-memcached
