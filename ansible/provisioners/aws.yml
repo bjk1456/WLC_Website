@@ -79,7 +79,7 @@
         module: wait_for
         host: "{{ inventory_hostname }}"
         port: 22
-        delay: 90
+        delay: 85
         timeout: 300
       become: no
 
