@@ -6,4 +6,4 @@
 - include: provisioners/aws.yml
 #
 # # Configure provisioned servers.
-- include: configure.yml
+# - include: configure.yml

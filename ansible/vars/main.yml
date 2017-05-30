@@ -5,3 +5,4 @@ vpc_id: vpc-bdd49cd9
 cidr_ip: 172.31.0.0/16
 ami_id: ami-ae7bfdb8
 instance_type: t2.micro
+
