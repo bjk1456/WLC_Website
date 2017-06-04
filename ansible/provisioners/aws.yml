@@ -83,13 +83,38 @@
         module: wait_for
         host: "{{ inventory_hostname }}"
         port: 22
-        delay: 85
+        delay: 100
         timeout: 300
       become: no
 
     - name: Set selinux into 'permissive' mode.
       selinux: policy=targeted state=permissive
       become: yes
+ 
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      become: yes
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Add sudoers users to wheel group
+      become: yes
+      user: name=bdgr groups=wheel append=yes state=present createhome=yes
+       
+    - name: Set up authorized keys for the bdgr user
+      become: yes
+      authorized_key: 
+        user: bdgr 
+        state: present
+        key: "{{ lookup('file', '~/.ssh/windsor.pub') }}"
 
 - hosts: aws
   gather_facts: true
@@ -108,11 +133,26 @@
   roles:
     - { role: geerlingguy.apache }
 
+
+
 - hosts: aws
   gather_facts: true
   become: true
   roles:
-    #- { role: openstack-ansible-security }
-    - { role: geerlingguy.repo-epel }
-
+    - { role: openstack-ansible-security }
+    #- { role: geerlingguy.repo-epel }
   
+#- hosts: aws
+#  gather_facts: true
+#  tasks:
+#    - name: Remove centos user
+#      become: true
+#      become_user: bdgr
+#      user:
+#        name: centos
+#        state: absent
+#        remove: yes
+
+
+
+
