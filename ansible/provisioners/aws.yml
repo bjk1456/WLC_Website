@@ -133,25 +133,33 @@
   roles:
     - { role: geerlingguy.apache }
 
-
-
 - hosts: aws
   gather_facts: true
   become: true
   roles:
     - { role: openstack-ansible-security }
-    #- { role: geerlingguy.repo-epel }
+    - { role: geerlingguy.repo-epel }
+    - { role: ansible-yum-cron }
   
+- hosts: aws
+  gather_facts: true
+  become: true
+  tasks:
+    - name: upgrade all packages
+      yum: name=* state=latest
+
 #- hosts: aws
 #  gather_facts: true
 #  tasks:
 #    - name: Remove centos user
 #      become: true
-#      become_user: bdgr
 #      user:
 #        name: centos
 #        state: absent
 #        remove: yes
+
+
+  
 
 
 

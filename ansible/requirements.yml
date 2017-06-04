@@ -4,6 +4,7 @@
 - src: geerlingguy.apache
 - src: git+https://git.openstack.org/openstack/openstack-ansible-security
 - src: freedomofpress.generate-ssl-cert
+- src: git+https://github.com/jeffwidman/ansible-yum-cron
 #- src: geerlingguy.php
 #- src: geerlingguy.php-mysql
 #- src: geerlingguy.php-memcached
