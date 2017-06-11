@@ -120,10 +120,13 @@
   gather_facts: true
   become: true
   roles:
-    - role: freedomofpress.generate-ssl-cert 
-      ssl_certificate_bit_length: 4096
-      ssl_certificate_directory: /etc/pki/tls
-      ssl_certificate_basename: apache-selfsigned
+    - { role: openstack-ansible-security }
+    - { role: geerlingguy.repo-epel }
+    - { role: ansible-yum-cron }
+    - { role: freedomofpress.generate-ssl-cert, 
+          ssl_certificate_bit_length: 4096,
+          ssl_certificate_directory: /etc/pki/tls,
+          ssl_certificate_basename: apache-selfsigned }
 
 - hosts: aws
   gather_facts: true
@@ -132,19 +135,11 @@
     - ~/.virtualenvs/WLCWebsite/lib/python3.6/site-packages/ansible/galaxy/data/container_enabled/roles/geerlingguy.apache/vars/AmazonLinux.yml
   roles:
     - { role: geerlingguy.apache }
-
-- hosts: aws
-  gather_facts: true
-  become: true
-  roles:
-    - { role: openstack-ansible-security }
-    - { role: geerlingguy.repo-epel }
-    - { role: ansible-yum-cron }
   
 - hosts: aws
   gather_facts: true
   become: true
-  tasks:
+  post_tasks:
     - name: upgrade all packages
       yum: name=* state=latest
 
